@@ -1,7 +1,7 @@
 import csv from 'csv-parser';
 import fs from 'fs';
 import axios from 'axios';
-import cheerio from 'cheerio';
+import { sleep } from './sleep';
 import { parse } from 'node-html-parser';
 import path from 'path';
 import { config } from 'dotenv';
@@ -104,10 +104,6 @@ async function getSummonerV4({ country, name }: { country: string; name: string 
 //   console.log(await getSummonerV4('[KR] 쭌 베'));
 // }
 // getSummonerV4test();
-
-async function sleep(ms: number) {
-  return new Promise((r) => setTimeout(r, ms));
-}
 
 async function getProGameId(nickName: string): Promise<string[]> {
   try {
