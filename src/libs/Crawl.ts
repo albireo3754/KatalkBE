@@ -72,9 +72,6 @@ async function csvToJSON(name: string) {
   saveJSON(data, path.join(__dirname, `${name}.json`));
 }
 
-// 1. proID만들기
-// csvToJSON('proID');
-
 function isActivatedID(LP: string) {
   if (LP.match('Ch') || LP.match('Diamond I') || LP.match('aster')) {
     return true;
@@ -167,7 +164,13 @@ async function makePuuidJSON() {
   saveJSON(puuidData, './puuid.json');
 }
 
-makePuuidJSON();
+// 1. proID.json만들기
+// csvToJSON('proID');
+
+// 2. json 바탕으로 riot API에 값을 가져와서 puuid.json 만들기
+// makePuuidJSON();
+
+// 2월 1일 timestamp:1612149145
 // saveJSON({ puuid: 'hi' }, './puuid');
 // getProNickname().then((data) => {
 //   console.log(data);
