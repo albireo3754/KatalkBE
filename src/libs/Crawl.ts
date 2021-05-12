@@ -4,6 +4,8 @@ import axios from 'axios';
 import cheerio from 'cheerio';
 import { parse } from 'node-html-parser';
 import path from 'path';
+import { config } from 'dotenv';
+config();
 interface INickplusID {
   idx: string;
   nickname: string;
@@ -70,10 +72,53 @@ async function csvToJSON(name: string) {
 // 1. proID만들기
 // csvToJSON('proID');
 
+function isActivatedID(LP: string) {
+  if (LP.match('Ch') || LP.match('Diamond I') || LP.match('aster')) {
+    return true;
+  }
+  return false;
+}
+
+async function getSummonerV4(summonerName: string) {
+  // summonerName : [KR] 이름~
+  const [rawCountry, rawName] = summonerName.split('] ');
+  const name = encodeURIComponent(rawName);
+  let country;
+  if (rawCountry === '[KR') {
+    country = 'kr';
+  } else {
+    country = rawCountry.slice(1).toLowerCase() + '1';
+  }
+  console.log(
+    `https://${country}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${process.env.RIOT}`,
+  );
+  return await axios.get(
+    `https://${country}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${process.env.RIOT}`,
+  );
+}
+
+async function getSummonerV4test() {
+  console.log(await getSummonerV4('[EUW] DWG KIA'));
+  console.log(await getSummonerV4('[KR] 쭌 베'));
+}
+
+getSummonerV4test();
+
 async function getProNickname() {
-  const data = await axios.get('https://www.trackingthepros.com/player/Chovy/');
-  const root = await parse(data.data).querySelectorAll('.table')[1].querySelector('td').textContent;
-  return root.replace(/.+\s/, '');
+  const data = await axios.get('https://www.trackingthepros.com/player/Showmaker/');
+  const root = await parse(data.data).querySelectorAll('.table')[1].querySelectorAll('td');
+  let i = 0;
+  while (i < root.length) {
+    if (i & 1) {
+      if (isActivatedID(root[i].textContent)) {
+        console.log(root[i - 1].innerText);
+        const { data } = await getSummonerV4(root[i - 1].innerText);
+        console.log(data);
+      }
+    }
+    i++;
+  }
+  // return root.replace(/.+\s/, '');
 }
 
 // getProNickname().then((data) => {
