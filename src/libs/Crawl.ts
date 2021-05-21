@@ -58,7 +58,7 @@ function readCSVproID(url: string) {
   });
 }
 
-function saveJSON(data: unknown, url: string) {
+export function saveJSON(data: unknown, url: string): void {
   const json = JSON.stringify(data);
   if (!url.match(/\.json$/)) {
     url += '.json';
